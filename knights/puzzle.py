@@ -36,18 +36,19 @@ knowledge1 = And(
 # B says "We are of different kinds."
 
 knowledge2 = And(
-    # Each character is either a knight or a knave
-    Or(AKnight, AKnave),
-    Or(BKnight, BKnave),
-    Not(And(AKnight, AKnave)),
-    Not(And(BKnight, BKnight)),
+    # A and B are either both knights or both knaves
+    Biconditional(AKnight, BKnight),
 
-    # A's statement: "We are the same kind."
+    # If A is a knight, then they are the same kind as B (which A claims)
     Implication(AKnight, Biconditional(AKnight, BKnight)),
 
-    # B's statement: "We are different kinds."
-    Implication(BKnight, Not(Biconditional(AKnight, BKnight)))
+    # If B is a knight, then A and B are of different kinds (which B claims)
+    Implication(BKnight, Not(Biconditional(AKnight, BKnight))),
+
+    # A and B cannot both be knights or both be knaves due to contradiction
+    Or(And(AKnight, BKnave), And(AKnave, BKnight))
 )
+
 
 
 
@@ -58,26 +59,25 @@ knowledge2 = And(
 # B says "C is a knave."
 # C says "A is a knight."
 knowledge3 = And(
-    # Each character is either a knight or a knave
+    # Each character is either a knight or a knave, not both
     Or(AKnight, AKnave),
-    Or(BKnight, BKnave),
-    Or(CKnight, CKnight),
     Not(And(AKnight, AKnave)),
+    Or(BKnight, BKnave),
     Not(And(BKnight, BKnave)),
+    Or(CKnight, CKnight),
     Not(And(CKnight, CKnight)),
 
-    # A says "I am either a knight or a knave"
-    Implication(AKnight, Or(AKnight, AKnave)),
-
-    # B says "A said 'I am a knave'"
+    # A makes an ambiguous statement, so no strong assertion here
+    # B claims A said "I am a knave", implying:
     Implication(BKnight, Biconditional(AKnight, AKnave)),
 
-    # B also says "C is a knave"
+    # B says "C is a knave"
     Implication(BKnight, CKnave),
 
-    # C says "A is a knight"
+    # C claims "A is a knight"
     Implication(CKnight, AKnight)
 )
+
 
 
 
