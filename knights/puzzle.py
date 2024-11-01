@@ -12,22 +12,37 @@ CKnave = Symbol("C is a Knave")
 # Puzzle 0
 # A says "I am both a knight and a knave."
 knowledge0 = And(
-    # TODO
+    Or(AKnight, AKnave),                # A must be either a knight or a knave, not both
+    Not(And(AKnight, AKnave)),          # A cannot be both a knight and a knave
+    Implication(AKnight, And(AKnight, AKnave))  # If A is a knight, then the statement "I am both" must be true
 )
+
 
 # Puzzle 1
 # A says "We are both knaves."
 # B says nothing.
 knowledge1 = And(
-    # TODO
+    Or(AKnight, AKnave),
+    Or(BKnight, BKnave),
+    Not(And(AKnight, AKnave)),
+    Not(And(BKnight, BKnave)),
+    Implication(AKnight, And(AKnave, BKnave)),  # If A is a knight, they both must be knaves
+    Implication(AKnave, Or(AKnight, BKnight))   # If A is a knave, at least one is a knight
 )
+
 
 # Puzzle 2
 # A says "We are the same kind."
 # B says "We are of different kinds."
 knowledge2 = And(
-    # TODO
+    Or(AKnight, AKnave),
+    Or(BKnight, BKnave),
+    Not(And(AKnight, AKnave)),
+    Not(And(BKnight, BKnave)),
+    Biconditional(AKnight, BKnight),         # If A is a knight, B is a knight, and vice versa
+    Biconditional(AKnight, Not(BKnight))     # A knight means B is of the opposite kind
 )
+
 
 # Puzzle 3
 # A says either "I am a knight." or "I am a knave.", but you don't know which.
@@ -35,8 +50,17 @@ knowledge2 = And(
 # B says "C is a knave."
 # C says "A is a knight."
 knowledge3 = And(
-    # TODO
+    Or(AKnight, AKnave),
+    Or(BKnight, BKnave),
+    Or(CKnight, CKnave),
+    Not(And(AKnight, AKnave)),
+    Not(And(BKnight, BKnave)),
+    Not(And(CKnight, CKnave)),
+    
+    # A is a knight if A says "I am a knight" and is telling the truth
+    Biconditional(AKnight, BKnight),
 )
+
 
 
 def main():
