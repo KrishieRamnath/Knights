@@ -59,24 +59,31 @@ knowledge2 = And(
 # B says "C is a knave."
 # C says "A is a knight."
 knowledge3 = And(
-    # A, B, and C are mutually exclusive in their roles as knight/knave
+    # A can only be a knight or a knave
     Or(AKnight, AKnave),
-    Not(And(AKnight, AKnave)),
+    
+    # B can only be a knight or a knave
     Or(BKnight, BKnave),
-    Not(And(BKnight, BKnave)),
+    
+    # C can only be a knight or a knave
     Or(CKnight, CKnave),
+    
+    # Ensure that A cannot be both a knight and a knave
+    Not(And(AKnight, AKnave)),
+    Not(And(BKnight, BKnave)),
     Not(And(CKnight, CKnave)),
-
-    # B claims "A said 'I am a knave'"
-    Implication(BKnight, Biconditional(AKnave, AKnave)),
-
-    # B says "C is a knave"
-    Implication(BKnight, CKnave),
-    Implication(BKnave, Not(CKnave)),
-
+    
+    # B says "A said 'I am a knave'"
+    Implication(BKnight, AKnave),  # If B is a knight, then A must be a knave
+    Implication(BKnave, AKnight),   # If B is a knave, then A cannot be a knave (hence must be a knight)
+    
+    # B also says "C is a knave"
+    Implication(BKnight, CKnave),   # If B is a knight, then C must be a knave
+    Implication(BKnave, CKnight),    # If B is a knave, then C cannot be a knave (hence must be a knight)
+    
     # C says "A is a knight"
-    Implication(CKnight, AKnight),
-    Implication(CKnave, Not(AKnight))
+    Implication(CKnight, AKnight),   # If C is a knight, then A must be a knight
+    Implication(CKnave, AKnave)      # If C is a knave, then A cannot be a knight
 )
 
 
