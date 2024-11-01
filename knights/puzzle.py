@@ -34,14 +34,22 @@ knowledge1 = And(
 # Puzzle 2
 # A says "We are the same kind."
 # B says "We are of different kinds."
+from logic import *
+
 knowledge2 = And(
+    # Each character is either a knight or a knave
     Or(AKnight, AKnave),
     Or(BKnight, BKnave),
     Not(And(AKnight, AKnave)),
     Not(And(BKnight, BKnave)),
-    Biconditional(AKnight, BKnight),         # If A is a knight, B is a knight, and vice versa
-    Biconditional(AKnight, Not(BKnight))     # A knight means B is of the opposite kind
+
+    # A says "We are the same kind."
+    Implication(AKnight, Biconditional(AKnight, BKnight)),
+
+    # B says "We are of different kinds."
+    Implication(BKnight, Not(Biconditional(AKnight, BKnight)))
 )
+
 
 
 # Puzzle 3
@@ -50,16 +58,27 @@ knowledge2 = And(
 # B says "C is a knave."
 # C says "A is a knight."
 knowledge3 = And(
+    # Each character is either a knight or a knave
     Or(AKnight, AKnave),
     Or(BKnight, BKnave),
     Or(CKnight, CKnave),
     Not(And(AKnight, AKnave)),
     Not(And(BKnight, BKnave)),
     Not(And(CKnight, CKnave)),
-    
-    # A is a knight if A says "I am a knight" and is telling the truth
-    Biconditional(AKnight, BKnight),
+
+    # B says "A said 'I am a knave.'"
+    Implication(BKnight, AKnave),
+    Implication(BKnave, AKnight),
+
+    # B says "C is a knave."
+    Implication(BKnight, CKnave),
+    Implication(BKnave, CKnight),
+
+    # C says "A is a knight."
+    Implication(CKnight, AKnight),
+    Implication(CKnave, AKnave)
 )
+
 
 
 
