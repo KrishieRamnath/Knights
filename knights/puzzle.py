@@ -59,32 +59,36 @@ knowledge2 = And(
 # B says "C is a knave."
 # C says "A is a knight."
 knowledge3 = And(
-    # A can only be a knight or a knave
+    # Each character is either a knight or a knave (not both)
     Or(AKnight, AKnave),
-    
-    # B can only be a knight or a knave
     Or(BKnight, BKnave),
-    
-    # C can only be a knight or a knave
     Or(CKnight, CKnave),
-    
-    # Ensure that A cannot be both a knight and a knave
     Not(And(AKnight, AKnave)),
     Not(And(BKnight, BKnave)),
     Not(And(CKnight, CKnave)),
-    
-    # B says "A said 'I am a knave'"
-    Implication(BKnight, AKnave),  # If B is a knight, then A must be a knave
-    Implication(BKnave, AKnight),   # If B is a knave, then A cannot be a knave (hence must be a knight)
-    
-    # B also says "C is a knave"
-    Implication(BKnight, CKnave),   # If B is a knight, then C must be a knave
-    Implication(BKnave, CKnight),    # If B is a knave, then C cannot be a knave (hence must be a knight)
-    
-    # C says "A is a knight"
-    Implication(CKnight, AKnight),   # If C is a knight, then A must be a knight
-    Implication(CKnave, AKnave)      # If C is a knave, then A cannot be a knight
+
+    # Statements from the puzzle:
+    # A's ambiguous statement: "I am a knight or I am a knave." (we don’t know which)
+    Biconditional(AKnight, Or(AKnight, AKnave)),  # This makes A consistent with a truthful statement
+
+    # B's first statement: "A said 'I am a knave'"
+    Implication(BKnight, AKnave),  # If B is a knight, then A said they are a knave
+    Implication(BKnave, AKnight),  # If B is a knave, then A is actually a knight
+
+    # B's second statement: "C is a knave"
+    Implication(BKnight, CKnave),  # If B is a knight, then C is indeed a knave
+    Implication(BKnave, CKnight),  # If B is a knave, then C must be a knight
+
+    # C's statement: "A is a knight"
+    Implication(CKnight, AKnight),  # If C is telling the truth, then A must be a knight
+    Implication(CKnave, AKnave),    # If C is lying, then A is a knave
+
+    # Cross-references to reinforce deductions
+    # Ensures that if B's statement is true, it aligns with both B and C’s statements.
+    Implication(And(BKnight, CKnave), AKnave),   # If B and C's statements align on A being a knave, enforce this
+    Implication(And(CKnight, BKnave), AKnight)   # If C and B’s statements imply A is a knight, enforce this
 )
+
 
 
 
